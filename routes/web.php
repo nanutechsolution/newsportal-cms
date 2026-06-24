@@ -1,0 +1,9 @@
+<?php
+
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Route;
+
+// Kita mengarahkan route utama ('/') ke HomeController yang baru dibuat
+Route::get('/', [HomeController::class, 'index'])->name('home'); // Route untuk membaca detail artikel
+Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('article.show');
