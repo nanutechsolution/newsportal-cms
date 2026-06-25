@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IndeksController;
 use Illuminate\Support\Facades\Route;
@@ -14,3 +15,5 @@ Route::get('/halaman/{slug}', [App\Http\Controllers\PageController::class, 'show
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 Route::get('/penulis/{user}', [App\Http\Controllers\AuthorController::class, 'show'])->name('author.show');
 Route::get('/indeks', [IndeksController::class, 'index'])->name('indeks');
+Route::post('/berita/{articleId}/komentar', [CommentController::class, 'store'])->name('comment.store');
+

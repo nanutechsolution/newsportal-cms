@@ -10,6 +10,7 @@
             <div class="prose prose-lg md:prose-xl prose-red max-w-none text-gray-700">
                 {!! $page->content !!}
             </div>
+            
         </div>
 
     </div>

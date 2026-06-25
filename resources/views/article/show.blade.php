@@ -105,8 +105,6 @@ $shareTitle = urlencode($article->title);
                     </figcaption>
                 </figure>
                 @endif
-
-
                 {{-- Action Bar: Social Share --}}
                 <div class="flex items-center justify-between py-4 border-y border-gray-100 mb-8">
                     <div class="flex items-center gap-3">
@@ -182,26 +180,124 @@ $shareTitle = urlencode($article->title);
                 <section class="mb-14" id="komentar">
                     <div class="flex items-center justify-between mb-8 pb-4 border-b-2 border-gray-100">
                         <h3 class="text-2xl font-heading font-extrabold text-[#0F2D52] uppercase tracking-tight">Komentar Pembaca</h3>
-                        <span class="bg-[#0F2D52] text-white px-3 py-1 rounded text-sm font-bold shadow-sm">0</span>
+                        <span class="bg-[#0F2D52] text-white px-3 py-1 rounded text-sm font-bold shadow-sm">
+                            {{ $article->approvedComments->count() }}
+                        </span>
                     </div>
 
-                    {{-- Form Komentar --}}
-                    <div class="bg-white border border-slate-200 rounded-xl p-5 mb-8 shadow-sm">
+                    {{-- Notifikasi Sukses/Error Form Komentar --}}
+                    <div id="comment-alert" class="hidden mb-6 p-4 rounded-xl text-sm font-sans font-bold"></div>
+
+                    {{-- Form Kirim Komentar --}}
+                    <form id="comment-form" action="{{ route('comment.store', $article->id) }}" method="POST" class="bg-white border border-slate-200 rounded-xl p-6 mb-8 shadow-sm">
+                        @csrf
                         <h4 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                             <x-heroicon-s-chat-bubble-left-ellipsis class="w-5 h-5 text-[#D4A017]" /> Tinggalkan Komentar Anda
                         </h4>
-                        <textarea class="w-full bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm focus:ring-2 focus:ring-[#0F2D52] focus:border-transparent transition-all outline-none resize-none" rows="3" placeholder="Tulis komentar yang relevan dan sopan..."></textarea>
-                        <div class="mt-3 flex justify-between items-center">
-                            <p class="text-[11px] text-slate-400 w-2/3">Komentar sepenuhnya menjadi tanggung jawab pembaca sesuai UU ITE.</p>
-                            <button class="bg-[#0F2D52] text-white font-bold py-2.5 px-6 rounded-lg hover:bg-[#D4A017] transition-colors text-sm shadow-md">Kirim</button>
-                        </div>
-                    </div>
 
-                    {{-- List Komentar (Kosong sebagai default desain) --}}
-                    <div class="text-center py-10 bg-[#F5F7FA] rounded-xl border border-dashed border-slate-300">
-                        <p class="text-slate-500 text-sm font-medium">Belum ada komentar. Jadilah yang pertama memberikan tanggapan!</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                                <input type="text" name="name" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-[#0F2D52] outline-none" placeholder="Nama Anda..." value="{{ auth()->check() ? auth()->user()->name : '' }}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 font-sans">Alamat Email</label>
+                                <input type="email" name="email" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-[#0F2D52] outline-none" placeholder="Email Anda (tidak dipublikasikan)..." value="{{ auth()->check() ? auth()->user()->email : '' }}">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Isi Komentar</label>
+                            <textarea name="comment" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm focus:ring-2 focus:ring-[#0F2D52] outline-none resize-none" rows="3" placeholder="Tulis komentar yang relevan dan sopan..."></textarea>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                            <p class="text-[11px] text-slate-400 leading-relaxed">Komentar sepenuhnya menjadi tanggung jawab pembaca sesuai UU ITE. Redaksi berhak menghapus komentar tidak relevan.</p>
+                            <button type="submit" class="w-full sm:w-auto bg-[#0F2D52] text-white font-bold py-2.5 px-6 rounded-lg hover:bg-[#D4A017] transition-colors text-sm shadow-md shrink-0">Kirim Komentar</button>
+                        </div>
+                    </form>
+
+                    {{-- Daftar Komentar Pembaca --}}
+                    <div class="flex flex-col gap-5">
+                        @forelse($article->approvedComments as $comment)
+                        <div class="bg-white border border-slate-100 p-5 rounded-xl shadow-sm flex gap-4 items-start">
+                            <div class="w-10 h-10 rounded-full bg-[#0F2D52] text-[#D4A017] flex items-center justify-center font-bold font-sans text-sm">
+                                {{ substr($comment->name, 0, 1) }}
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <h5 class="text-sm font-extrabold text-slate-800">{{ $comment->name }}</h5>
+                                    <span class="text-[10px] text-slate-400 font-medium">{{ $comment->created_at->diffForHumans() }}</span>
+                                </div>
+                                <p class="text-slate-600 text-sm leading-relaxed">{{ $comment->comment }}</p>
+                            </div>
+                        </div>
+                        @empty
+                        <div class="text-center py-10 bg-[#F5F7FA] rounded-xl border border-dashed border-slate-300">
+                            <p class="text-slate-500 text-sm font-medium">Belum ada komentar disetujui. Jadilah yang pertama memberikan tanggapan!</p>
+                        </div>
+                        @endforelse
                     </div>
                 </section>
+
+                {{-- Script Ajax di bagian @push('scripts') --}}
+                @push('scripts')
+                <script>
+                    document.getElementById('comment-form').addEventListener('submit', function(e) {
+                        e.preventDefault();
+
+                        const form = this;
+                        const alertBox = document.getElementById('comment-alert');
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalBtnText = submitBtn.innerText;
+
+                        // Nonaktifkan tombol saat loading submit
+                        submitBtn.disabled = true;
+                        submitBtn.innerText = 'Mengirim...';
+
+                        const formData = new FormData(form);
+
+                        fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-green-50', 'text-green-700');
+
+                                if (data.success) {
+                                    // Notifikasi sukses kirim komentar
+                                    alertBox.classList.add('bg-green-50', 'text-green-700');
+                                    alertBox.innerHTML = data.message;
+                                    form.querySelector('textarea[name="comment"]').value = ''; // Reset textarea
+                                } else {
+                                    // Notifikasi kegagalan validasi
+                                    alertBox.classList.add('bg-red-50', 'text-red-700');
+                                    alertBox.innerHTML = data.errors.join('<br>');
+                                }
+                            })
+                            .catch(error => {
+                                alertBox.classList.remove('hidden', 'bg-green-50', 'text-green-700');
+                                alertBox.classList.add('bg-red-50', 'text-red-700');
+                                alertBox.innerHTML = 'Terjadi kesalahan sistem. Silakan coba kembali beberapa saat lagi.';
+                                console.error('Error:', error);
+                            })
+                            .finally(() => {
+                                // Aktifkan kembali tombol submit
+                                submitBtn.disabled = false;
+                                submitBtn.innerText = originalBtnText;
+                                alertBox.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                });
+                            });
+                    });
+                </script>
+                @endpush
+
             </main>
 
             {{-- ========================================== --}}
