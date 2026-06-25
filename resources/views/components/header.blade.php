@@ -2,8 +2,15 @@
 @inject('monetizationSettings', 'App\Settings\MonetizationSettings')
 
 @php
-    // Ambil maksimal 6 kategori utama untuk navigasi Navy Blue
-    $kategoriMenu = \App\Models\Category::orderBy('order_column')->take(6)->get();
+    // 1. Ambil HANYA Kategori Utama (Parent) beserta Sub-kategorinya
+    $allCategories = \App\Models\Category::whereNull('parent_id')
+        ->with('children')
+        ->orderBy('order_column')
+        ->get();
+
+    // 2. Pisahkan untuk Desktop: 6 Kategori pertama untuk menu utama, sisanya masuk menu "Lainnya"
+    $mainCategories = $allCategories->take(6);
+    $moreCategories = $allCategories->skip(6);
 @endphp
 
 <header class="w-full bg-white border-t-[6px] border-[#0F2D52] flex flex-col">
@@ -49,28 +56,90 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-14">
                 
-                {{-- Spacer kiri untuk menyeimbangkan layout desktop --}}
-                <div class="hidden md:block w-12"></div>
+                {{-- KIRI: Mini Logo (Solusi agar identitas brand tetap ada saat pembaca men-scroll ke bawah) --}}
+                <div class="hidden md:flex items-center w-48 shrink-0 border-r border-slate-700/50 py-2 mr-4">
+                    <a href="{{ url('/') }}" class="font-heading font-extrabold text-xl tracking-tight text-white hover:text-[#D4A017] transition-colors truncate">
+                        NUSA<span class="text-[#D4A017]">AKSARA</span>
+                    </a>
+                </div>
 
-                {{-- Kategori Desktop Dinamis --}}
-                <nav class="hidden md:flex space-x-1 font-heading font-bold text-[13px] uppercase tracking-wider h-full justify-center">
-                    <a href="{{ url('/') }}" class="flex items-center px-4 h-full hover:bg-[#1A3F6D] transition-colors border-b-[3px] {{ request()->is('/') ? 'border-[#D4A017] text-[#D4A017]' : 'border-transparent text-white hover:border-gray-400' }}">
+                {{-- TENGAH: Kategori Desktop Dinamis --}}
+                <nav class="hidden md:flex flex-1 justify-center space-x-1 font-heading font-bold text-[13px] uppercase tracking-wider h-full">
+                    
+                    {{-- Menu Beranda --}}
+                    <a href="{{ url('/') }}" class="flex items-center px-3 lg:px-4 h-full hover:bg-[#1A3F6D] transition-colors border-b-[3px] {{ request()->is('/') ? 'border-[#D4A017] text-[#D4A017]' : 'border-transparent text-white' }}">
                         Beranda
                     </a>
-                    @foreach($kategoriMenu as $kat)
-                        <a href="{{ route('category.show', $kat->slug) }}" class="flex items-center px-4 h-full hover:bg-[#1A3F6D] transition-colors border-b-[3px] {{ request()->is('kategori/' . $kat->slug) ? 'border-[#D4A017] text-[#D4A017]' : 'border-transparent text-white hover:border-gray-400' }}">
-                            {{ $kat->name }}
-                        </a>
+
+                    {{-- 6 Menu Utama + Dropdown Sub-Kategori --}}
+                    @foreach($mainCategories as $kat)
+                        <div class="relative group h-full">
+                            <a href="{{ route('category.show', $kat->slug) }}" class="flex items-center px-3 lg:px-4 h-full hover:bg-[#1A3F6D] transition-colors border-b-[3px] {{ request()->is('kategori/' . $kat->slug) ? 'border-[#D4A017] text-[#D4A017]' : 'border-transparent text-white' }}">
+                                {{ $kat->name }}
+                                {{-- Icon panah bawah jika punya sub-kategori --}}
+                                @if($kat->children->isNotEmpty())
+                                    <x-heroicon-m-chevron-down class="w-4 h-4 ml-1 opacity-70 group-hover:rotate-180 transition-transform" />
+                                @endif
+                            </a>
+
+                            {{-- Dropdown Sub-Kategori (Standar) --}}
+                            @if($kat->children->isNotEmpty())
+                                <div class="absolute left-0 top-full hidden group-hover:block w-48 bg-white border-t-[3px] border-[#D4A017] shadow-xl">
+                                    @foreach($kat->children as $child)
+                                        <a href="{{ route('category.show', $child->slug) }}" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#0F2D52] border-b border-slate-100 transition-colors">
+                                            {{ $child->name }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
                     @endforeach
-                    <a href="#" class="flex items-center px-4 h-full hover:bg-[#1A3F6D] transition-colors text-white border-b-[3px] border-transparent hover:border-[#D4A017] hover:text-[#D4A017]">
+
+                    {{-- Menu "Lainnya" (Muncul jika Kategori lebih dari 6) --}}
+                    @if($moreCategories->isNotEmpty())
+                        <div class="relative group h-full">
+                            <button class="flex items-center px-3 lg:px-4 h-full hover:bg-[#1A3F6D] transition-colors border-b-[3px] border-transparent text-white uppercase focus:outline-none">
+                                Lainnya
+                                <x-heroicon-m-bars-3 class="w-4 h-4 ml-1 opacity-70" />
+                            </button>
+
+                            {{-- Dropdown "Lainnya" menggunakan Layout Grid (Mega Menu 3 Kolom) --}}
+                            <div class="absolute right-0 top-full hidden group-hover:block w-[450px] lg:w-[650px] bg-white border-t-[3px] border-[#D4A017] shadow-2xl p-5 cursor-default">
+                                <div class="grid grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 max-h-[65vh] overflow-y-auto custom-scrollbar pr-3">
+                                    @foreach($moreCategories as $moreKat)
+                                        <div class="flex flex-col">
+                                            <a href="{{ route('category.show', $moreKat->slug) }}" class="text-sm font-extrabold font-heading text-[#0F2D52] hover:text-[#D4A017] border-b-2 border-slate-100 pb-1.5 mb-2 transition-colors">
+                                                {{ $moreKat->name }}
+                                            </a>
+                                            {{-- Sub-kategori di dalam Mega Menu (di-indent ke kanan) --}}
+                                            @if($moreKat->children->isNotEmpty())
+                                                <div class="flex flex-col space-y-1.5">
+                                                    @foreach($moreKat->children as $moreChild)
+                                                        <a href="{{ route('category.show', $moreChild->slug) }}" class="text-[11px] font-bold uppercase tracking-widest text-slate-500 hover:text-[#0F2D52] flex items-center group/link transition-colors">
+                                                            <span class="w-1 h-1 rounded-full bg-[#D4A017] mr-2 inline-block group-hover/link:w-2 transition-all"></span>
+                                                            {{ $moreChild->name }}
+                                                        </a>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Menu Indeks --}}
+                    <a href="{{ route('indeks') }}" class="flex items-center px-4 h-full hover:bg-[#1A3F6D] transition-colors border-b-[3px] {{ request()->routeIs('indeks') ? 'border-[#D4A017] text-[#D4A017]' : 'border-transparent text-white' }}">
                         Indeks
                     </a>
                 </nav>
 
-                {{-- Pencarian Desktop --}}
-                <div class="hidden md:flex w-12 justify-end">
-                    <a href="{{ route('search') }}" class="hover:text-[#D4A017] transition-colors">
-                        <x-heroicon-o-magnifying-glass class="w-5 h-5" />
+                {{-- KANAN: Pencarian Desktop & Indeks --}}
+                <div class="hidden md:flex items-center justify-end w-48 shrink-0 gap-4 border-l border-slate-700/50 pl-4">
+                    <a href="{{ route('indeks') }}" class="text-xs font-bold hover:text-[#D4A017] transition-colors uppercase tracking-widest hidden lg:block {{ request()->routeIs('indeks') ? 'text-[#D4A017]' : 'text-white' }}">Indeks</a>
+                    <a href="{{ route('search') }}" class="hover:text-[#D4A017] transition-colors bg-white/10 p-2 rounded-full">
+                        <x-heroicon-o-magnifying-glass class="w-4 h-4" />
                     </a>
                 </div>
 
@@ -81,20 +150,60 @@
             </div>
         </div>
 
-        {{-- Mobile Menu --}}
-        <div id="mobile-menu" class="hidden md:hidden bg-[#0A1F38] border-t border-slate-700">
+        {{-- Mobile Menu (Dilengkapi class custom-scrollbar) --}}
+        <div id="mobile-menu" class="hidden md:hidden bg-[#0A1F38] border-t border-slate-700 max-h-[75vh] overflow-y-auto custom-scrollbar">
             <a href="{{ route('search') }}" class="flex items-center gap-3 px-6 py-4 text-sm font-bold uppercase text-[#D4A017] hover:bg-[#1A3F6D] border-b border-slate-700/50">
                 <x-heroicon-o-magnifying-glass class="w-4 h-4" /> Cari Berita...
             </a>
             <a href="{{ url('/') }}" class="block px-6 py-4 text-sm font-bold uppercase hover:bg-[#1A3F6D] border-b border-slate-700/50 {{ request()->is('/') ? 'text-[#D4A017]' : 'text-white' }}">
                 Beranda
             </a>
-            @foreach(\App\Models\Category::orderBy('order_column')->get() as $katMobile)
-                <a href="{{ route('category.show', $katMobile->slug) }}" class="flex justify-between items-center px-6 py-4 text-sm font-bold uppercase hover:bg-[#1A3F6D] border-b border-slate-700/50 {{ request()->is('kategori/' . $katMobile->slug) ? 'text-[#D4A017]' : 'text-white' }}">
-                    {{ $katMobile->name }}
-                    <x-heroicon-m-chevron-right class="w-4 h-4 opacity-50" />
-                </a>
+            
+            @foreach($allCategories as $katMobile)
+                <div class="border-b border-slate-700/50">
+                    <a href="{{ route('category.show', $katMobile->slug) }}" class="flex justify-between items-center px-6 py-4 text-sm font-bold uppercase hover:bg-[#1A3F6D] {{ request()->is('kategori/' . $katMobile->slug) ? 'text-[#D4A017]' : 'text-white' }}">
+                        {{ $katMobile->name }}
+                    </a>
+                    
+                    {{-- Sub-kategori untuk Mobile --}}
+                    @if($katMobile->children->isNotEmpty())
+                        <div class="bg-[#08182b] border-t border-slate-800">
+                            @foreach($katMobile->children as $childMobile)
+                                <a href="{{ route('category.show', $childMobile->slug) }}" class="flex items-center pl-10 pr-6 py-3 text-xs font-medium uppercase text-slate-300 hover:text-white hover:bg-[#1A3F6D] border-b border-slate-800 last:border-0">
+                                    <x-heroicon-m-minus class="w-3 h-3 mr-2 text-[#D4A017]" />
+                                    {{ $childMobile->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             @endforeach
         </div>
     </div>
 </header>
+
+{{-- Style Khusus untuk Scrollbar Elegan (Karena konten kategori bisa sangat banyak) --}}
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9; /* slate-100 */
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1; /* slate-300 */
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #D4A017; /* Emas saat di-hover */
+    }
+    
+    /* Tema Gelap Khusus untuk Scrollbar Mobile Menu */
+    #mobile-menu.custom-scrollbar::-webkit-scrollbar-track {
+        background: #0F2D52;
+    }
+    #mobile-menu.custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #1e40af;
+    }
+</style>

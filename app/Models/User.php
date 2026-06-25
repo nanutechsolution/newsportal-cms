@@ -40,8 +40,7 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         // Untuk saat ini, izinkan semua user yang punya role apapun (kecuali guest murni)
-        // Nantinya bisa diperketat, misal: return $this->hasRole(['Super Admin', 'Editor', 'Wartawan']);
-        return true;
+        return $this->hasRole(['super_admin', 'Editor', 'Wartawan']);
     }
     public function articles()
     {

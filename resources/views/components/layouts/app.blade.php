@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- MENGAMBIL DATA DARI DATABASE -->
     @inject('generalSettings', 'App\Settings\GeneralSettings')
     @inject('seoSettings', 'App\Settings\SeoSettings')
@@ -13,9 +15,9 @@
 
     <title>{{ $customTitle ?: ($seoSettings->meta_title ?: $generalSettings->site_name) }}</title>
     <meta name="description" content="{{ $customDescription ?: ($seoSettings->meta_description ?: $generalSettings->site_description) }}">
-    
+
     @if($generalSettings->favicon_url)
-        <link rel="icon" href="{{ asset('storage/' . $generalSettings->favicon_url) }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('storage/' . $generalSettings->favicon_url) }}" type="image/x-icon">
     @endif
 
     <!-- 1. FONDASI TIPOGRAFI ENTERPRISE -->
@@ -28,29 +30,80 @@
 
     <!-- CSS Kustom Tipografi -->
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, h5, h6, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .font-heading {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
     </style>
+
+    <!-- Slot untuk injeksi CSS spesifik dari halaman anak -->
+    @stack('styles')
 </head>
+
 <body class="bg-[#F5F7FA] text-slate-800 antialiased flex flex-col min-h-screen">
-    
+
     <!-- Iklan Top (Opsional) -->
     @if($monetizationSettings->header_ad_code)
-        <div class="w-full bg-white py-3 flex justify-center border-b border-gray-200">
-            {!! $monetizationSettings->header_ad_code !!}
-        </div>
+    <div class="w-full bg-white py-3 flex justify-center border-b border-gray-200">
+        {!! $monetizationSettings->header_ad_code !!}
+    </div>
     @endif
 
-    <!-- HEADER PORTAL BERITA -->
-    <x-header />
+    <!-- HEADER PORTAL BERITA (Smart Sticky Wrapper) -->
+    <div id="smart-header-wrapper" class="sticky top-0 z-[55] w-full transition-transform duration-300 ease-in-out shadow-sm bg-white">
+        <x-header />
+    </div>
 
     <!-- KONTEN UTAMA DENGAN WHITE CANVAS ELEGANT -->
-    <main class="flex-grow w-full max-w-7xl mx-auto bg-white border-x border-gray-200 shadow-sm min-h-screen">
+    <main class="flex-grow w-full max-w-7xl mx-auto bg-white border-x border-gray-200 shadow-sm min-h-screen relative">
         {{ $slot }}
     </main>
 
     <!-- FOOTER -->
     <x-footer />
 
+    <!-- Slot untuk injeksi Script spesifik dari halaman anak -->
+    @stack('scripts')
+
+    <!-- Logika Smart Sticky Header Global -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const headerWrapper = document.getElementById('smart-header-wrapper');
+            let lastScrollY = window.scrollY;
+
+            // Jarak minimum sebelum header mulai disembunyikan (dalam pixel)
+            const scrollThreshold = 150;
+
+            window.addEventListener('scroll', () => {
+                const currentScrollY = window.scrollY;
+
+                // Jika user scroll ke Bawah dan sudah melewati batas threshold
+                if (currentScrollY > lastScrollY && currentScrollY > scrollThreshold) {
+                    // Sembunyikan header ke atas
+                    headerWrapper.style.transform = 'translateY(-100%)';
+                }
+                // Jika user scroll kembali ke Atas
+                else if (currentScrollY < lastScrollY) {
+                    // Munculkan kembali header
+                    headerWrapper.style.transform = 'translateY(0)';
+                }
+
+                // Update posisi scroll terakhir
+                lastScrollY = currentScrollY;
+            }, {
+                passive: true
+            }); // passive: true untuk performa scroll yang lebih mulus
+        });
+    </script>
 </body>
+
 </html>

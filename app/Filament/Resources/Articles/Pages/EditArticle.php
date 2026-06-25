@@ -11,7 +11,15 @@ use Filament\Resources\Pages\EditRecord;
 class EditArticle extends EditRecord
 {
     protected static string $resource = ArticleResource::class;
-
+    /**
+     * getRedirectUrl
+     *
+     * @return string
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
     protected function getHeaderActions(): array
     {
         return [

@@ -50,7 +50,10 @@ class ArticlesTable
                     ->label('Headline')
                     ->boolean()
                     ->sortable(),
-
+                IconColumn::make('is_breaking')
+                    ->label('Breaking News')
+                    ->boolean()
+                    ->sortable(),
                 TextColumn::make('published_at')
                     ->label('Tanggal Tayang')
                     ->dateTime('d M Y, H:i')

@@ -24,10 +24,10 @@
                 {{-- Sosial Media Dinamis --}}
                 <div class="flex gap-4">
                     @if($generalSettings->social_facebook)
-                        <a href="{{ $generalSettings->social_facebook }}" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D4A017] transition-all"><x-heroicon-m-globe-alt class="w-5 h-5" /></a>
+                        <a href="{{ $generalSettings->social_facebook }}" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D4A017] transition-all"><x-selfhst-facebook class="w-5 h-5" /></a>
                     @endif
                     @if($generalSettings->social_instagram)
-                        <a href="{{ $generalSettings->social_instagram }}" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D4A017] transition-all"><x-heroicon-m-camera class="w-5 h-5" /></a>
+                        <a href="{{ $generalSettings->social_instagram }}" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#D4A017] transition-all"><x-selfhst-instagram class="w-5 h-5" /></a>
                     @endif
                 </div>
             </div>

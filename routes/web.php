@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IndeksController;
 use Illuminate\Support\Facades\Route;
 
 // Kita mengarahkan route utama ('/') ke HomeController yang baru dibuat
@@ -12,3 +13,4 @@ Route::get('/berita/{slug}', [ArticleController::class, 'show'])->name('article.
 Route::get('/halaman/{slug}', [App\Http\Controllers\PageController::class, 'show'])->name('page.show');
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 Route::get('/penulis/{user}', [App\Http\Controllers\AuthorController::class, 'show'])->name('author.show');
+Route::get('/indeks', [IndeksController::class, 'index'])->name('indeks');

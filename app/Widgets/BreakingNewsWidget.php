@@ -18,7 +18,7 @@ class BreakingNewsWidget extends BaseWidget
         // 2. Ambil artikel dengan status featured (Breaking News)
         $articles = Article::with(['category'])
             ->where('status', 'published')
-            ->where('is_featured', true)
+            ->where('is_breaking', true)
             ->latest('published_at')
             ->take($limit)
             ->get();

@@ -47,7 +47,7 @@ class ArticleForm
                                     ->label('Kutipan Singkat (Excerpt)')
                                     ->rows(3)
                                     ->maxLength(500)
-                                     ->columnSpanFull()
+                                    ->columnSpanFull()
                                     ->helperText('Ringkasan berita yang akan muncul di halaman depan. Kosongkan untuk mengambil otomatis dari paragraf pertama.'),
 
                                 RichEditor::make('content')
@@ -70,6 +70,14 @@ class ArticleForm
                                     // ->optimize('webp') // Otomatis convert ke WebP
                                     ->maxSize(2048) // Maksimal 2MB
                                     ->required(),
+                                TextInput::make('cover_caption')
+                                    ->label('Keterangan Foto (Caption)')
+                                    ->placeholder('Misal: Presiden Joko Widodo saat meresmikan tol baru...')
+                                    ->maxLength(255),
+                                TextInput::make('cover_source')
+                                    ->label('Sumber/Kredit Foto')
+                                    ->placeholder('Misal: Dok. NusaAksara atau Humas Pemkot')
+                                    ->maxLength(100),
                             ]),
 
                         Section::make('SEO Metadata')
@@ -143,6 +151,10 @@ class ArticleForm
 
                                 Toggle::make('is_featured')
                                     ->label('Jadikan Headline (Featured)')
+                                    ->default(false),
+
+                                Toggle::make('is_breaking')
+                                    ->label('Jadikan Breaking News')
                                     ->default(false),
 
                                 Toggle::make('allow_comments')

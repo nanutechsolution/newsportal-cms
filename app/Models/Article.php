@@ -29,8 +29,11 @@ class Article extends Model implements HasMedia
         'slug',
         'excerpt',
         'content',
+        'cover_caption',
+        'cover_source',
         'status',
         'is_featured',
+        'is_breaking',
         'allow_comments',
         'published_at',
     ];
@@ -39,6 +42,7 @@ class Article extends Model implements HasMedia
         'status' => ArticleStatus::class,
         'is_featured' => 'boolean',
         'allow_comments' => 'boolean',
+        'is_breaking' => 'boolean',
         'published_at' => 'datetime',
     ];
 
