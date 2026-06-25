@@ -45,9 +45,11 @@ class ManageGeneralSettings extends SettingsPage
                                         FileUpload::make('logo_url')
                                             ->label('Logo Utama')
                                             ->image()
+                                            ->disk('public')
                                             ->directory('settings/logo'),
                                         FileUpload::make('favicon_url')
                                             ->label('Favicon')
+                                            ->disk('public')
                                             ->image()
                                             ->directory('settings/favicon'),
                                     ]),

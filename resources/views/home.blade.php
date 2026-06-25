@@ -1,5 +1,5 @@
 <x-layouts.app title="Beranda">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="px-4 md:px-8 lg:px-10 py-10 w-full">
         
         {{-- Logika Builder Engine --}}
         @if($page->layout === 'homepage-builder')
@@ -15,7 +15,7 @@
 
         @else
             {{-- Fallback jika halaman menggunakan layout standar (bukan builder) --}}
-            <div class="prose max-w-none">
+            <div class="prose prose-lg prose-red max-w-none mx-auto">
                 {!! $page->content !!}
             </div>
         @endif
