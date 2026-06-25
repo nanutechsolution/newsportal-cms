@@ -9,6 +9,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -41,5 +42,14 @@ class User extends Authenticatable implements FilamentUser
         // Untuk saat ini, izinkan semua user yang punya role apapun (kecuali guest murni)
         // Nantinya bisa diperketat, misal: return $this->hasRole(['Super Admin', 'Editor', 'Wartawan']);
         return true;
+    }
+    public function articles()
+    {
+        return $this->hasMany(Article::class, 'author_id');
+    }
+
+    public function page(): HasMany
+    {
+        return $this->hasMany(Page::class, 'author_id');
     }
 }

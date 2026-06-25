@@ -121,7 +121,7 @@
                         <p class="text-slate-600 text-sm md:text-base leading-relaxed mb-4">
                             Wartawan berdedikasi yang berfokus pada isu-isu pembangunan nasional, teknologi, dan kebijakan publik. Berkomitmen menyajikan data faktual untuk mencerdaskan bangsa.
                         </p>
-                        <a href="#" class="inline-flex items-center text-sm font-bold text-[#0F2D52] hover:text-[#D4A017] transition-colors uppercase tracking-wider">
+                        <a href="{{route('author.show', $article->author)}}" class="inline-flex items-center text-sm font-bold text-[#0F2D52] hover:text-[#D4A017] transition-colors uppercase tracking-wider">
                             Lihat semua artikel <x-heroicon-m-arrow-right class="w-4 h-4 ml-1" />
                         </a>
                     </div>

@@ -3,8 +3,8 @@
     <p class="text-blue-200 text-sm mb-6">Dapatkan berita eksklusif langsung ke email Anda setiap pagi.</p>
 
     <div class="max-w-md mx-auto flex flex-col md:flex-row gap-3">
-        <input type="email" placeholder="Email Anda..." class="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none">
-        <button class="bg-[#D4A017] hover:bg-yellow-500 transition-colors px-6 py-3 rounded-lg font-bold uppercase text-sm">
+        <input type="email" placeholder="Email Anda..." class="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#D4A017] w-full">
+        <button class="bg-[#D4A017] hover:bg-yellow-500 transition-colors px-8 py-3 rounded-lg font-bold uppercase text-sm whitespace-nowrap">
             Daftar
         </button>
     </div>
