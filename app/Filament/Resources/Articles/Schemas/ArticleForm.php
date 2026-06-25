@@ -47,6 +47,7 @@ class ArticleForm
                                     ->label('Kutipan Singkat (Excerpt)')
                                     ->rows(3)
                                     ->maxLength(500)
+                                     ->columnSpanFull()
                                     ->helperText('Ringkasan berita yang akan muncul di halaman depan. Kosongkan untuk mengambil otomatis dari paragraf pertama.'),
 
                                 RichEditor::make('content')
@@ -64,6 +65,7 @@ class ArticleForm
                                     ->collection('cover')
                                     ->label('Gambar Utama (Cover)')
                                     ->image()
+                                    ->disk('public')
                                     ->imageEditor() // Memungkinkan crop gambar langsung di admin
                                     // ->optimize('webp') // Otomatis convert ke WebP
                                     ->maxSize(2048) // Maksimal 2MB

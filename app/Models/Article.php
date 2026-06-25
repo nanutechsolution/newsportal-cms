@@ -10,12 +10,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Article extends Model implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia;
+    use HasFactory, SoftDeletes, InteractsWithMedia, LogsActivity;
 
     protected $fillable = [
         'site_id',
@@ -38,6 +41,20 @@ class Article extends Model implements HasMedia
         'allow_comments' => 'boolean',
         'published_at' => 'datetime',
     ];
+
+    
+    /**
+     * Konfigurasi Spatie Activity Log
+     * Merekam setiap perubahan pada kolom fillable.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty() // Hanya rekam kolom yang benar-benar berubah nilainya
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => "Artikel telah di-{$eventName}");
+    }
 
     public function site(): BelongsTo
     {

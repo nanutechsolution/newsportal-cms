@@ -2,28 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
+use App\Models\Page;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Mengambil 4 berita headline (is_featured = true) yang sudah diterbitkan
-        $featuredArticles = Article::with(['category', 'media'])
-            ->where('is_featured', true)
-            ->where('status', 'published')
-            ->latest('published_at')
-            ->take(4)
-            ->get();
+        // 1. Ambil Halaman dengan slug 'home' beserta relasi widget-nya
+        // Pastikan Page dengan slug 'home' sudah terbuat oleh Seeder
+        $page = Page::with(['widgets.registry'])->where('slug', 'home')->first();
 
-        // Mengambil 10 berita terbaru biasa
-        $latestArticles = Article::with(['category', 'media'])
-            ->where('status', 'published')
-            ->latest('published_at')
-            ->take(10)
-            ->get();
+        // Jika halaman tidak ditemukan, tampilkan 404
+        if (!$page) {
+            abort(404, 'Homepage belum dikonfigurasi. Silakan jalankan seeder atau buat Page dengan slug "home".');
+        }
 
-        return view('home', compact('featuredArticles', 'latestArticles'));
+        return view('home', compact('page'));
     }
 }
