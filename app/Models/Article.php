@@ -28,6 +28,7 @@ class Article extends Model implements HasMedia
         'title',
         'slug',
         'excerpt',
+        'city',
         'content',
         'cover_caption',
         'cover_source',

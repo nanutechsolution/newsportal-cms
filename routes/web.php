@@ -15,5 +15,5 @@ Route::get('/halaman/{slug}', [App\Http\Controllers\PageController::class, 'show
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 Route::get('/penulis/{user}', [App\Http\Controllers\AuthorController::class, 'show'])->name('author.show');
 Route::get('/indeks', [IndeksController::class, 'index'])->name('indeks');
-Route::post('/berita/{articleId}/komentar', [CommentController::class, 'store'])->name('comment.store');
-
+Route::get('/topik/{slug}', [App\Http\Controllers\TagController::class, 'show'])->name('tag.show');
+Route::post('/berita/{article:slug}/komentar', [App\Http\Controllers\CommentController::class, 'store'])->name('comment.store');

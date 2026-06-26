@@ -42,7 +42,12 @@ class ArticleForm
                                     ->unique(ignoreRecord: true, modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, Get $get) {
                                         return $rule->where('site_id', $get('site_id'));
                                     }),
-
+                                TextInput::make('city')
+                                    ->label('Kota (Dateline)')
+                                    ->placeholder('Misal: Sumba Barat atau Wejewa Barat')
+                                    ->maxLength(100)
+                                    ->columnSpanFull()
+                                    ->helperText('Lokasi peliputan berita. Akan muncul dengan cetak tebal di awal paragraf pertama.'),
                                 Textarea::make('excerpt')
                                     ->label('Kutipan Singkat (Excerpt)')
                                     ->rows(3)
