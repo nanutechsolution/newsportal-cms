@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Settings\GeneralSettings;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -18,6 +19,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -31,8 +33,27 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => Color::hex('#0F2D52'),
-                
+
             ])
+            // Mengambil Brand Name dari GeneralSettings secara dinamis (Lazy Evaluation)
+            ->brandName(fn() => app(GeneralSettings::class)->site_name ?? 'NusaAksara CMS')
+            // Mengambil Brand Logo dari GeneralSettings secara dinamis (Lazy Evaluation)
+            ->brandLogo(function () {
+                $settings = app(GeneralSettings::class);
+                if ($settings->logo_url && Storage::disk('public')->exists($settings->logo_url)) {
+                    return Storage::url($settings->logo_url);
+                }
+                return null;
+            })
+            // Menyesuaikan tinggi logo agar terlihat proporsional
+            ->brandLogoHeight('3rem')
+            ->favicon(function () {
+                $settings = app(GeneralSettings::class);
+                if ($settings->favicon_url && Storage::disk('public')->exists($settings->favicon_url)) {
+                    return Storage::url($settings->favicon_url);
+                }
+                return null;
+            })
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
