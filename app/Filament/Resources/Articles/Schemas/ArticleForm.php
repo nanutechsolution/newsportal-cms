@@ -39,6 +39,7 @@ class ArticleForm
                                     ->label('Slug URL')
                                     ->required()
                                     ->maxLength(255)
+                                    ->hidden()
                                     ->unique(ignoreRecord: true, modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, Get $get) {
                                         return $rule->where('site_id', $get('site_id'));
                                     }),
@@ -53,6 +54,7 @@ class ArticleForm
                                     ->rows(3)
                                     ->maxLength(500)
                                     ->columnSpanFull()
+                                    ->hidden()
                                     ->helperText('Ringkasan berita yang akan muncul di halaman depan. Kosongkan untuk mengambil otomatis dari paragraf pertama.'),
 
                                 RichEditor::make('content')
@@ -86,6 +88,7 @@ class ArticleForm
                             ]),
 
                         Section::make('SEO Metadata')
+                            ->hidden()
                             ->description('Atur meta tag khusus untuk optimasi mesin pencari pada berita ini.')
                             ->relationship('seoMetadata')
                             ->schema([
