@@ -116,7 +116,7 @@ class ArticleForm
                     ->schema([
                         Section::make('Organisasi')
                             ->schema([
-                                Select::make('site_id')
+                                Hidden::make('site_id')
                                     ->label('Website')
                                     ->relationship('site', 'name')
                                     ->required()
@@ -130,7 +130,23 @@ class ArticleForm
                                     ->relationship('category', 'name')
                                     ->required()
                                     ->searchable()
-                                    ->preload(),
+                                    ->preload()
+                                    ->createOptionForm([
+                                        TextInput::make('name')
+                                            ->label('Nama Kategori')
+                                            ->required()
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(fn(string $operation, $state, Set $set) => $set('slug', \Illuminate\Support\Str::slug($state))),
+
+                                        TextInput::make('slug')
+                                            ->label('Slug')
+                                            ->required()
+                                            ->unique('categories', 'slug', ignoreRecord: true),
+
+                                        // Menyuntikkan site_id secara otomatis (Hidden) agar tidak error saat disimpan ke Database
+                                        Hidden::make('site_id')
+                                            ->default(fn() => \App\Models\Site::first()?->id),
+                                    ]),
 
                                 Select::make('tags')
                                     ->label('Tag')
