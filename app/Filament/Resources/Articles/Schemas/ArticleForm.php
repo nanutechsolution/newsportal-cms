@@ -37,10 +37,8 @@ class ArticleForm
                                     ->columnSpanFull()
                                     ->afterStateUpdated(fn(string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
-                                TextInput::make('slug')
-                                    ->label('Slug URL')
+                             Hidden::make('slug')
                                     ->required()
-                                    ->maxLength(255)
                                     ->unique(ignoreRecord: true, modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, Get $get) {
                                         return $rule->where('site_id', $get('site_id'));
                                     }),
