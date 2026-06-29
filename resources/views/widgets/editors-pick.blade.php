@@ -1,7 +1,7 @@
 <div class="mb-10 md:mb-14">
     <div class="flex items-end justify-between mb-6 border-b-2 border-gray-200 pb-3">
         <h2 class="text-2xl md:text-3xl font-heading font-extrabold text-[#0F2D52] uppercase tracking-tight">
-            <span class="text-[#D4A017] mr-2">|</span>{{ $title }}
+            <span class="text-[#D4A017] mr-2">|</span>
         </h2>
         <a href="#" class="text-[10px] md:text-xs font-heading font-bold text-[#D4A017] hover:text-[#0F2D52] uppercase tracking-widest transition-colors">
             Lihat Semua &rarr;
