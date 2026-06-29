@@ -72,7 +72,7 @@
                                 <span class="w-1 h-1 rounded-full bg-slate-300 hidden sm:block"></span>
 
                                 <span class="flex items-center gap-1.5 font-medium" title="Waktu Diterbitkan">
-                                    {{ $article->published_at ? $article->published_at->translatedFormat('l, d M Y | H:i') : $article->created_at->translatedFormat('l, d M Y | H:i') }} WIB
+                                    {{ $article->published_at ? $article->published_at->translatedFormat('l, d M Y | H:i') : $article->created_at->translatedFormat('l, d M Y | H:i') }} WITA   
                                 </span>
 
                                 <span class="w-1 h-1 rounded-full bg-slate-300 hidden sm:block"></span>
