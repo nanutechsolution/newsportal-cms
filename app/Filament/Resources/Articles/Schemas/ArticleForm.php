@@ -34,6 +34,7 @@ class ArticleForm
                                     ->maxLength(255)
                                     ->rows(2)
                                     ->live(onBlur: true)
+                                    ->columnSpanFull()
                                     ->afterStateUpdated(fn(string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                                 TextInput::make('slug')
