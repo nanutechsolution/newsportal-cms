@@ -12,7 +12,7 @@
             
             @if($index === 0)
                 <div class="md:col-span-8 group cursor-pointer">
-                    <a href="{{ url('/berita/' . $article->slug) }}" class="block relative w-full h-[320px] md:h-[460px] rounded-md overflow-hidden border border-gray-100">
+                    <a href="{{ url('/berita/' . $article->slug) }}" class="block relative w-full h-[360px] md:h-[480px] rounded-xl overflow-hidden border border-gray-100 shadow-sm">
                         @if($article->hasMedia('cover'))
                             <!-- Efek scale-105 memberikan zoom perlahan yang elegan -->
                             <img src="{{ $article->getFirstMediaUrl('cover') }}" alt="{{ $article->title }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700 ease-out">
@@ -22,20 +22,23 @@
                             </div>
                         @endif
                         
-                        <!-- Gradient Overlay yang lebih halus (Midnight Blue) -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0A1F38] via-[#0A1F38]/40 to-transparent opacity-90 group-hover:opacity-100 transition duration-300"></div>
+                        <!-- Gradient Overlay diperkecil hanya menutupi 75% dari bawah agar bagian atas gambar bersih -->
+                        <div class="absolute inset-x-0 bottom-0 h-[75%] bg-gradient-to-t from-[#0A1F38] via-[#0A1F38]/80 to-transparent opacity-95 group-hover:opacity-100 transition duration-300"></div>
                         
-                        <!-- Text Content -->
-                        <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full">
+                        <!-- Text Content: Dibatasi lebarnya agar tidak memenuhi seluruh layar dan menutupi gambar -->
+                        <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full md:w-5/6 lg:w-4/5">
                             <span class="inline-block bg-[#D4A017] text-[#0F2D52] text-[11px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-sm mb-4 shadow-sm font-heading">
                                 {{ $article->category->name ?? 'Laporan Utama' }}
                             </span>
-                            <h3 class="text-3xl md:text-[2.6rem] font-heading font-extrabold text-white leading-[1.15] mb-3 group-hover:text-[#D4A017] transition-colors drop-shadow-md">
+                            
+                            <!-- Tambahan line-clamp-3 agar judul yang sangat panjang tidak memakan terlalu banyak baris vertikal -->
+                            <h3 class="text-2xl md:text-4xl font-heading font-extrabold text-white leading-[1.25] mb-4 group-hover:text-[#D4A017] transition-colors drop-shadow-md line-clamp-3">
                                 {{ $article->title }}
                             </h3>
+                            
                             <div class="text-gray-300 text-sm font-medium flex items-center gap-3 font-sans">
                                 <span>{{ $article->author->name ?? 'Redaksi' }}</span>
-                                <span class="w-1 h-1 rounded-full bg-gray-400"></span>
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#D4A017]"></span>
                                 <span>{{ $article->published_at ? $article->published_at->diffForHumans() : 'Baru saja' }}</span>
                             </div>
                         </div>
@@ -49,7 +52,7 @@
                 @endif
                 
                 <a href="{{ url('/berita/' . $article->slug) }}" class="flex gap-4 group items-start">
-                    <div class="w-28 h-24 md:w-32 md:h-24 flex-shrink-0 rounded-md overflow-hidden relative border border-gray-100">
+                    <div class="w-28 h-24 md:w-32 md:h-24 flex-shrink-0 rounded-md overflow-hidden relative border border-gray-100 shadow-sm">
                         @if($article->hasMedia('cover'))
                             <img src="{{ $article->getFirstMediaUrl('cover') }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 ease-out">
                         @else
