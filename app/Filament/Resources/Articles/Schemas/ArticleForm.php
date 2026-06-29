@@ -28,10 +28,11 @@ class ArticleForm
                     ->schema([
                         Section::make('Konten Utama')
                             ->schema([
-                                TextInput::make('title')
+                                Textarea::make('title')
                                     ->label('Judul Berita')
                                     ->required()
                                     ->maxLength(255)
+                                    ->rows(2)
                                     ->live(onBlur: true)
                                     ->afterStateUpdated(fn(string $operation, $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
