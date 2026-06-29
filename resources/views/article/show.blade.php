@@ -1,5 +1,7 @@
-<x-layouts.app :title="$article->title" :description="$article->excerpt">
-
+<x-layouts.app
+    :title="$article->title"
+    :description="$article->excerpt"
+    :customOgImage="$article->getFirstMediaUrl('cover')">
     @inject('generalSettings', 'App\Settings\GeneralSettings')
 
     @php
