@@ -33,8 +33,8 @@ class ArticlesTable
                     ->label('Judul Berita')
                     ->searchable()
                     ->sortable()
-                    ->wrap()
-                    ->description(fn(Article $record): string => $record->slug),
+                    ->wrap(),
+                    // ->description(fn(Article $record): string => $record->slug),
 
                 TextColumn::make('category.name')
                     ->label('Kategori')
