@@ -10,14 +10,19 @@ class EditorsPickWidget extends BaseWidget
 {
     public function render(PageWidget $widget): string
     {
-        // Ambil berita yang di-flag khusus oleh editor
-        $articles = Article::with(['author'])
+        $config = $widget->configuration ?? [];
+        $limit = $config['limit'] ?? 4; // Ambil 4 berita untuk mengisi 1 Hero dan 3 List
+
+        // Logika Kurasi Redaksi: Hanya ambil yang di-flag "is_editors_pick"
+        $articles = Article::with(['category', 'author', 'media'])
             ->where('status', 'published')
-            ->where('is_featured', true) // Asumsi flag featured/editor pick
-            ->latest()
-            ->take(3)
+            ->where('is_editors_pick', true)
+            ->latest('published_at') // Urutkan yang terbaru di antara pilihan editor
+            ->take($limit)
             ->get();
 
-        return View::make('widgets.editors-pick', ['articles' => $articles])->render();
+        return View::make('widgets.editors-pick', [
+            'articles' => $articles,
+        ])->render();
     }
 }

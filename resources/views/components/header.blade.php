@@ -39,7 +39,7 @@ $moreCategories = $allCategories->skip(6);
                     </span>
                     TRENDING:
                 </span>
-                <a href="#" class="hover:text-[#0F2D52] transition-colors font-medium">IHSG Tembus Rekor Baru Hari Ini</a>
+                <!-- <a href="#" class="hover:text-[#0F2D52] transition-colors font-medium">IHSG Tembus Rekor Baru Hari Ini</a> -->
             </div>
 
             <div class="flex gap-5 font-medium">

@@ -23,9 +23,11 @@ class TrendingNewsWidget extends BaseWidget
             ->withSum(['dailyStats' => function ($query) {
                 $query->where('stat_date', '>=', Carbon::now()->subDays(7));
             }], 'total_views')
-            // Urutkan berdasarkan view terbanyak. Pakai COALESCE agar artikel dengan 0 view tetap tertangani
-            ->orderByRaw('COALESCE(daily_stats_sum_total_views, 0) DESC')
-            // Fallback: Jika ada artikel dengan jumlah view yang sama, urutkan berdasarkan yang paling baru
+            // ALGORITMA GRAVITASI BERITA (HOTNESS RANK):
+            // (Jumlah Views) dibagi dengan (Umur Artikel dalam Jam + 2) pangkat 1.5
+            // Semakin lama artikel, skornya akan semakin anjlok, memberi ruang untuk berita baru.
+            ->orderByRaw('(COALESCE(daily_stats_sum_total_views, 0) / POW(TIMESTAMPDIFF(HOUR, published_at, NOW()) + 2, 1.5)) DESC')
+            // Fallback: Jika ada artikel dengan skor yang sama persis
             ->latest('published_at')
             ->take($limit)
             ->get();

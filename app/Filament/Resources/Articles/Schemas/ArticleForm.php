@@ -165,6 +165,9 @@ class ArticleForm
                                 Toggle::make('allow_comments')
                                     ->label('Izinkan Komentar')
                                     ->default(true),
+                                Toggle::make('is_editors_pick')
+                                    ->label('Pilihan Editor')
+                                    ->helperText('Tampilkan artikel ini di blok eksklusif Pilihan Editor.'),
                             ]),
                     ])
                     ->columnSpan(['lg' => 1]),
