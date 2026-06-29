@@ -122,7 +122,6 @@ class ArticleForm
                                     ->required()
                                     ->searchable()
                                     ->preload()
-                                    ->hidden()
                                     ->default(fn() => \App\Models\Site::first()?->id),
 
                                 Select::make('category_id')
