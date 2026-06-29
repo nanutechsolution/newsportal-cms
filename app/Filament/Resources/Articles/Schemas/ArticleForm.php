@@ -41,7 +41,6 @@ class ArticleForm
                                     ->label('Slug URL')
                                     ->required()
                                     ->maxLength(255)
-                                    ->hidden()
                                     ->unique(ignoreRecord: true, modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule, Get $get) {
                                         return $rule->where('site_id', $get('site_id'));
                                     }),
