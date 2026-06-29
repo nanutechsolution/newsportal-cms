@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Articles\Tables;
 
 use App\Enums\ArticleStatus;
 use App\Models\Article;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -75,6 +76,13 @@ class ArticlesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('view_on_web')
+                    ->label('Lihat di Web')
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('info')
+                    ->url(fn(\App\Models\Article $record): string => route('article.show', $record->slug))
+                    ->openUrlInNewTab()
+                    ->visible(fn(\App\Models\Article $record): bool => $record->status === \App\Enums\ArticleStatus::Published),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
