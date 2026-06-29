@@ -116,12 +116,13 @@ class ArticleForm
                     ->schema([
                         Section::make('Organisasi')
                             ->schema([
-                                Hidden::make('site_id')
+                                Select::make('site_id')
                                     ->label('Website')
                                     ->relationship('site', 'name')
                                     ->required()
                                     ->searchable()
                                     ->preload()
+                                    ->hidden()
                                     ->default(fn() => \App\Models\Site::first()?->id),
 
                                 Select::make('category_id')
